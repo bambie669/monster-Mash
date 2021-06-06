@@ -10,6 +10,12 @@ let hasBonusLife = true;
 
 adjustHealthBars(chosenMaxLife);
 
+function reset() {
+  currentMonsterHealth = chosenMaxLife;
+  currentPlayerHealth = chosenMaxLife;
+  resetGame(chosenMaxLife);
+}
+
 function endRound() {
   const initialPlayerHealth = currentPlayerHealth;
   const playerDamage = dealPlayerDamage(MONSTER_ATTACK_VALUE);
@@ -19,18 +25,28 @@ function endRound() {
     hasBonusLife = false;
     removeBonusLife();
     currentPlayerHealth = initialPlayerHealth;
-    setPlayerHealth(initialPlayerHealth)
-    alert('you got a second wind ')
+    setPlayerHealth(initialPlayerHealth);
+    alert('you got a second wind ');
   }
 
   if (currentMonsterHealth <= 0 && currentPlayerHealth > 0) {
     alert('you won');
+    reset();
   } else if (currentPlayerHealth <= 0 && currentMonsterHealth > 0) {
     alert('you lost');
+    reset();
   } else if (currentPlayerHealth <= 0 && currentMonsterHealth <= 0) {
     alert('you have a draw');
+    reset();
   }
 }
+
+if (currentMonsterHealth <= 0 || currentPlayerHealth <=0 ){
+    reset();
+}
+  
+
+
 
 function attackMonster(stance) {
   let maxDamage;
