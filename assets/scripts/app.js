@@ -33,6 +33,48 @@ function writeToLog(event, value, monsterHealth, playerHealth) {
     finalMonsterHealth: monsterHealth,
     finalPlayerHealth: playerHealth,
   };
+  switch (event) {
+    case LOG_EVENT_PLAYER_ATTACK:
+      logEntry.target = 'MONSTER';
+      break;
+    case LOG_EVENT_PLAYER_STRONG_ATTACK:
+      logEntry = {
+        event: event,
+        value: value,
+        target: 'MONSTER',
+        finalMonsterHealth: monsterHealth,
+        finalPlayerHealth: playerHealth,
+      };
+      break;
+    case LOG_EVENT_MONSTER_ATTACK:
+      logEntry = {
+        event: event,
+        value: value,
+        target: 'PLAYER',
+        finalMonsterHealth: monsterHealth,
+        finalPlayerHealth: playerHealth,
+      };
+      break;
+    case LOG_EVENT_PLAYER_HEAL:
+      logEntry = {
+        event: event,
+        value: value,
+        target: 'PLAYER',
+        finalMonsterHealth: monsterHealth,
+        finalPlayerHealth: playerHealth,
+      };
+      break;
+    case LOG_EVENT_GAME_OVER:
+      logEvent = {
+        event: event,
+        value: value,
+        finalMonsterHealth: monsterHealth,
+        finalPlayerHealth: playerHealth,
+      };
+      break;
+    default:
+      logEntry = {};
+  }
   if (event === LOG_EVENT_PLAYER_ATTACK) {
     logEntry.target = 'MONSTER';
   } else if (event === LOG_EVENT_PLAYER_STRONG_ATTACK) {
@@ -80,29 +122,29 @@ function endRound() {
   if (currentMonsterHealth <= 0 && currentPlayerHealth > 0) {
     alert('you won');
     writeToLog(
-        LOG_EVENT_GAME_OVER,
-        'Player won',
-        currentMonsterHealth,
-        currentPlayerHealth
-      );
+      LOG_EVENT_GAME_OVER,
+      'Player won',
+      currentMonsterHealth,
+      currentPlayerHealth
+    );
     reset();
   } else if (currentPlayerHealth <= 0 && currentMonsterHealth > 0) {
     alert('you lost');
     writeToLog(
-        LOG_EVENT_GAME_OVER,
-        'Monster won',
-        currentMonsterHealth,
-        currentPlayerHealth
-      );
+      LOG_EVENT_GAME_OVER,
+      'Monster won',
+      currentMonsterHealth,
+      currentPlayerHealth
+    );
     reset();
   } else if (currentPlayerHealth <= 0 && currentMonsterHealth <= 0) {
     alert('you have a draw');
     writeToLog(
-        LOG_EVENT_GAME_OVER,
-        'A draw',
-        currentMonsterHealth,
-        currentPlayerHealth
-      );
+      LOG_EVENT_GAME_OVER,
+      'A draw',
+      currentMonsterHealth,
+      currentPlayerHealth
+    );
     reset();
   }
 }
@@ -112,23 +154,21 @@ if (currentMonsterHealth <= 0 || currentPlayerHealth <= 0) {
 }
 
 function attackMonster(stance) {
-  let maxDamage;
-  let logEvent;
-  if (stance === 'ATTACK_STANCE') {
-    maxDamage = ATTACK_VALUE;
-    logEvent = LOG_EVENT_PLAYER_ATTACK
-  } else if (stance === 'STRONG_ATTACK_STANCE') {
-    maxDamage = STRONG_ATTACK_VALUE;
-    logEvent = LOG_EVENT_PLAYER_STRONG_ATTACK
-  }
+  let maxDamage = stance === ATTACK_STANCE ? ATTACK_VALUE : STRONG_ATTACK_VALUE;
+  let logEvent =
+    stance === ATTACK_STANCE
+      ? LOG_EVENT_PLAYER_ATTACK
+      : LOG_EVENT_PLAYER_STRONG_ATTACK;
+  //   if (stance === 'ATTACK_STANCE') {
+  //     maxDamage = ATTACK_VALUE;
+  //     logEvent = LOG_EVENT_PLAYER_ATTACK
+  //   } else if (stance === 'STRONG_ATTACK_STANCE') {
+  //     maxDamage = STRONG_ATTACK_VALUE;
+  //     logEvent = LOG_EVENT_PLAYER_STRONG_ATTACK
+  //   }
   const damage = dealMonsterDamage(maxDamage);
   currentMonsterHealth -= damage;
-  writeToLog(
-      logEvent,
-      damage,
-      currentMonsterHealth,
-      currentPlayerHealth
-  )
+  writeToLog(logEvent, damage, currentMonsterHealth, currentPlayerHealth);
   endRound();
 }
 
@@ -155,11 +195,14 @@ function healPlayerHandler() {
     healValue,
     currentMonsterHealth,
     currentPlayerHealth
-)
+  );
   endRound();
 }
 
 function printLogHandler() {
+  for (let i = 0; i < 3; i++) {
+      console.log('___----____')
+  }
   console.log(battleLog);
 }
 
@@ -167,3 +210,4 @@ attackBtn.addEventListener('click', attackHandler);
 strongAttackBtn.addEventListener('click', strongAttackHandler);
 healBtn.addEventListener('click', healPlayerHandler);
 logBtn.addEventListener('click', printLogHandler);
+
