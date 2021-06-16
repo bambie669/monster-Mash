@@ -27,9 +27,9 @@ try {
 } catch (error) {
   console.log(error);
   chosenMaxLife = 100;
-  alert('You entered something wrong, defaul value set to 100')
+  alert('You entered something wrong, defaul value set to 100');
+  // throw error;
 }
-
 
 let chosenMaxLife = getMaxLifeValues();
 let battleLog = [];
